@@ -1,0 +1,24 @@
+# Cursor Rules: Laravel ApiQueryBuilder
+
+You are an expert Laravel developer writing code that integrates with `warrior/api-query-builder`.
+
+## Rules to follow:
+1. Always use `Model::apiQuery($request)` or `ApiQueryBuilder::for(Model::class, $request)`.
+2. Do not write manual `where()`, `whereHas()`, `with()`, or `orderBy()` inside index controllers when handled by query parameters. Use:
+   - `allowedFilters([...])`
+   - `defaultFilters([...])`
+   - `allowedIncludes([...])`
+   - `allowedCounts([...])`
+   - `allowedSearch([...])`
+   - `allowedSorts([...])` and `defaultSort(...)`
+   - `allowAll(...)`
+3. Whitelisted filters:
+   - Base table: `'name'`
+   - Relations: `'relation.column'`
+   - JSON attributes: `'json_column.attribute'`
+   - Wildcards: `'*'`, `'relation.*'`, `'json_col.*'`
+   - Local scopes: `'active'` (for `scopeActive`)
+   - Custom: `Filter::custom('key', fn($q, $v) => ...)`
+4. NEVER sort by relation columns. Only sort by base table columns.
+5. Terminate with `->response(ResourceClass::class)` or `->get()` / `->paginate()`.
+6. Ensure all query builder calls chain fluently and return JSON responses via ->response().

@@ -1,0 +1,59 @@
+[
+  {
+    "id": "eval_01_simple_crud_controller",
+    "description": "Verify the agent produces an Eloquent macro apiQuery() call with allowed filters and sorting",
+    "prompt": "Create an API controller method index() for the Product model in Laravel that allows filtering by name and status, searching across name and sku, and sorting by price or created_at.",
+    "expected_patterns": [
+      "Product::apiQuery",
+      "allowedFilters",
+      "allowedSearch",
+      "allowedSorts",
+      "response"
+    ],
+    "forbidden_patterns": [
+      "when($request->filled",
+      "allowedSorts.*category\\."
+    ]
+  },
+  {
+    "id": "eval_02_relation_and_includes",
+    "description": "Verify the agent correctly configures relational filter and eager loading without N+1",
+    "prompt": "We have an Author model that has many Books. Build the API endpoint to list authors, allowing the client to filter by books.title, eager load books and comments, and count reviews.",
+    "expected_patterns": [
+      "allowedFilters([.*'books.title'",
+      "allowedIncludes([.*'books'",
+      "allowedCounts([.*'reviews'",
+      "response"
+    ],
+    "forbidden_patterns": [
+      "whereHas('books'",
+      "with('books')",
+      "withCount('reviews')"
+    ]
+  },
+  {
+    "id": "eval_03_default_filters_immutability",
+    "description": "Verify the agent uses defaultFilters() instead of mutating the base builder",
+    "prompt": "In our UserController, we want the default status to be 'active' if the client doesn't send any filter, but allow the user to filter by inactive or banned.",
+    "expected_patterns": [
+      "defaultFilters([.*'status'.*=>.*'active'",
+      "allowedFilters"
+    ],
+    "forbidden_patterns": [
+      "User::where('status', 'active')",
+      "User::query()->where('status', 'active')"
+    ]
+  },
+  {
+    "id": "eval_04_no_relation_sort",
+    "description": "Verify the agent refuses or avoids sorting on relations",
+    "prompt": "Allow sorting by the user's role name in the index controller using ApiQueryBuilder.",
+    "expected_patterns": [
+      "allowedSorts"
+    ],
+    "forbidden_patterns": [
+      "allowedSorts([.*'roles.name'",
+      "allowedSorts([.*'role.name'"
+    ]
+  }
+]
